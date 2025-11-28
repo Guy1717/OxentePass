@@ -7,6 +7,7 @@ import com.oxentepass.oxentepass.entity.Avaliacao;
 import com.oxentepass.oxentepass.entity.Evento;
 import com.oxentepass.oxentepass.entity.Ingresso;
 import com.oxentepass.oxentepass.entity.PontoVenda;
+import com.oxentepass.oxentepass.entity.Tag;
 import com.querydsl.core.types.Predicate;
 
 public interface EventoService {
@@ -16,13 +17,15 @@ public interface EventoService {
     public void editarEvento(Long id, Evento evento); //Talvez faça sentido separar algumas partes da edição (endereço, por exemplo)
     public void deletarEvento(long id);
     // Tags
-    public void adicionarTag(long idEvento, long idTag); //Sobrecarga talvez faça sentido (add tag existente ou criar nova tag)
+    public void adicionarTag(long idEvento, long idTag); // Adição de Tag existente
+    public void adicionarTag(long idEvento, Tag tag);    // Criação de nova Tag
     public void removerTag(long idEvento, long idTag);
     // Ingressos
     public void adicionarIngresso(long id, Ingresso Ingresso);
     public void removerIngresso(long id, Ingresso Ingresso);
     // Pontos de venda
-    public void adicionarPontoVenda(long id, PontoVenda pontoVenda);
+    public void adicionarPontoVenda(long id, long idPontoVenda);    // Adição de PontoVenda existente
+    public void adicionarPontoVenda(long id, PontoVenda pontoVenda);// Criação de novo PontoVenda 
     public void removerPontoVenda(long id, PontoVenda pontoVenda);
     // Avaliações
     public void adicionarAvaliacao(long id, Avaliacao avaliacao);
