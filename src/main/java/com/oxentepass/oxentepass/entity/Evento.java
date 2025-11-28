@@ -54,6 +54,8 @@ public abstract class Evento {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Avaliacao> avaliacoes;
 
+    private double mediaAvaliacao;
+
     //Métodos
     public void addTag(Tag tag) {
         if (this.tags.contains(tag))
@@ -96,18 +98,22 @@ public abstract class Evento {
             throw new AvaliacaoInvalidaException("A avaliação já foi publicada.");
 
         this.avaliacoes.add(avaliacao);
+
+        calcularMediaAvaliacao();
     }
 
     public void removerAvaliacao(Avaliacao avaliacao) {
         if (!this.avaliacoes.remove(avaliacao)) 
             throw new AvaliacaoInvalidaException("A avaliação informada não consta no evento " + this.nome + ".");
+
+        calcularMediaAvaliacao();
     }
 
-    public double mediaAvaliacoes() {
+    private void calcularMediaAvaliacao() {
         double total = 0;
         for (Avaliacao aval : this.avaliacoes) 
             total += aval.getNota();
 
-        return (double)(total / this.avaliacoes.size());
+        this.mediaAvaliacao = (double)(total / this.avaliacoes.size());
     }
 }
