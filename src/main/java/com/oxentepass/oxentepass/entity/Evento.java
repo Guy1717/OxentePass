@@ -3,6 +3,9 @@ package com.oxentepass.oxentepass.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.oxentepass.oxentepass.exceptions.AvaliacaoInvalidaException;
+import com.oxentepass.oxentepass.exceptions.IngressoInvalidoException;
+import com.oxentepass.oxentepass.exceptions.PontoVendaInvalidoException;
 import com.oxentepass.oxentepass.exceptions.TagInvalidaException;
 
 import jakarta.persistence.CascadeType;
@@ -62,6 +65,42 @@ public abstract class Evento {
     public void removerTag(Tag tag) {
         if (!this.tags.remove(tag)) 
             throw new TagInvalidaException("A tag informada não consta no evento " + this.nome + ".");
+    }
+
+    public void addIngresso(Ingresso ingresso) {
+        if (this.ingressos.contains(ingresso))
+            throw new IngressoInvalidoException("O ingresso informado já consta no evento " + this.nome + ".");
+
+        this.ingressos.add(ingresso);
+    }
+
+    public void removerIngresso(Ingresso ingresso) {
+        if (!this.ingressos.remove(ingresso)) 
+            throw new IngressoInvalidoException("O ingresso informado não consta no evento " + this.nome + ".");
+    }
+
+    public void addPontoVenda(PontoVenda pontoVenda) {
+        if (this.pontosVenda.contains(pontoVenda))
+            throw new PontoVendaInvalidoException("O ponto de venda informado já consta no evento " + this.nome + ".");
+
+        this.pontosVenda.add(pontoVenda);
+    }
+
+    public void removerPontoVenda(PontoVenda pontoVenda) {
+        if (!this.pontosVenda.remove(pontoVenda)) 
+            throw new PontoVendaInvalidoException("O ponto de venda informado não consta no evento " + this.nome + ".");
+    }
+
+    public void addAvaliacao(Avaliacao avaliacao) {
+        if (this.avaliacoes.contains(avaliacao))
+            throw new AvaliacaoInvalidaException("A avaliação já foi publicada.");
+
+        this.avaliacoes.add(avaliacao);
+    }
+
+    public void removerAvaliacao(Avaliacao avaliacao) {
+        if (!this.avaliacoes.remove(avaliacao)) 
+            throw new AvaliacaoInvalidaException("A avaliação informada não consta no evento " + this.nome + ".");
     }
 
     public double mediaAvaliacoes() {
