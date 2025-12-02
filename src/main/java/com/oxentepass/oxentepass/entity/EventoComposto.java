@@ -14,32 +14,32 @@ public class EventoComposto extends Evento { // Aplicação do padrão de projet
     
     // Talvez não seja necessário cascade
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventoSimples> subeventos;
+    private List<Evento> subeventos;
 
     // Construtor
     public EventoComposto() {
-        this.subeventos = new ArrayList<EventoSimples>();
+        this.subeventos = new ArrayList<Evento>();
     }
 
     // Métodos
-    public void addEvento(EventoSimples evento) {
+    public void addSubevento(Evento evento) {
         if (this.subeventos.contains(evento))
             throw new SubeventoInvalidoException("O sub-evento " + evento.getNome() + " já faz parte do evento " + this.getNome() + ".");
 
         this.subeventos.add(evento);
     }
 
-    public void removerEvento(EventoSimples evento) {
+    public void removerSubevento(Evento evento) {
         if (!this.subeventos.remove(evento))
             throw new SubeventoInvalidoException("O sub-evento " + evento.getNome() + " não faz parte do evento " + this.getNome() + ".");
     }
 
     // Getters e Setters (feito manualmente por causa de algum bug do lombok)
-    public List<EventoSimples> getSubeventos() {
+    public List<Evento> getSubeventos() {
         return this.subeventos;
     }
 
-    public void setSubeventos(List<EventoSimples> subeventos) {
+    public void setSubeventos(List<Evento> subeventos) {
         this.subeventos = subeventos;
     }
 }
