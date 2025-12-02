@@ -11,10 +11,11 @@ import com.oxentepass.oxentepass.entity.Tag;
 import com.querydsl.core.types.Predicate;
 
 public interface EventoService {
+    // Operações Básicas
     public void criarEvento(Evento evento);
     public Page<Evento> listarEventos(Pageable pageable);
     public Page<Evento> listarEventosFiltro (Predicate predicate, Pageable pageable);
-    public void editarEvento(Long idEvento, Evento evento); //Talvez faça sentido separar algumas partes da edição (endereço, por exemplo)
+    public void editarEvento(Long idEvento, Evento evento);
     public void deletarEvento(long idEvento);
     // Tags
     public void adicionarTag(long idEvento, long idTag); // Adição de Tag existente
@@ -30,4 +31,8 @@ public interface EventoService {
     // Avaliações
     public void adicionarAvaliacao(long idEvento, Avaliacao avaliacao);
     public void removerAvaliacao(long idEvento, long idAvaliacao);
+    // Sub-Eventos
+    public void criarSubevento(long idEvento, Evento subevento);
+    public Page<Evento> listarSubeventos(long idEvento, Pageable pageable);
+    public void removerSubevento(long idEvento, long idSubevento);
 }
