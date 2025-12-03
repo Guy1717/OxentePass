@@ -56,6 +56,8 @@ public abstract class Evento {
 
     private double mediaAvaliacao;
 
+    private double altura; // Atributo para limitar possível árvore de sub-eventos
+
     //Métodos
     public void addTag(Tag tag) {
         if (this.tags.contains(tag))
