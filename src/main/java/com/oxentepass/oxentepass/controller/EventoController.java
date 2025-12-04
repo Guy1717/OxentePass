@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oxentepass.oxentepass.controller.request.EventoRequest;
+import com.oxentepass.oxentepass.controller.response.EventoResponse;
 import com.oxentepass.oxentepass.entity.Evento;
 import com.oxentepass.oxentepass.service.EventoService;
 import com.querydsl.core.types.Predicate;
@@ -35,34 +36,56 @@ public class EventoController {
     @PostMapping("/simples")
     public ResponseEntity<String> criarEventoSimples (@RequestBody @Valid EventoRequest dto) {
         eventoService.criarEvento(dto.paraEntidade(true));
-        return new ResponseEntity<String>("Evento simples " + dto.nome() + " criado com sucesso!", HttpStatus.CREATED);
+        
+        return new ResponseEntity<String>(
+            "Evento simples " + dto.nome() + " criado com sucesso!", 
+            HttpStatus.CREATED
+        );
     }
 
     @PostMapping("/composto")
     public ResponseEntity<String> criarEventoComposto (@RequestBody @Valid EventoRequest dto) {
         eventoService.criarEvento(dto.paraEntidade(false));
-        return new ResponseEntity<String>("Evento composto " + dto.nome() + " criado com sucesso!", HttpStatus.CREATED);
+        
+        return new ResponseEntity<String>(
+            "Evento composto " + dto.nome() + " criado com sucesso!", 
+            HttpStatus.CREATED
+        );
     }
     
     @GetMapping
-    public ResponseEntity<Page<Evento>> listarTodosEventos (Pageable pageable) {
-        return new ResponseEntity<Page<Evento>>(eventoService.listarEventos(pageable), HttpStatus.OK);
+    public ResponseEntity<Page<EventoResponse>> listarTodosEventos (Pageable pageable) {
+        return new ResponseEntity<Page<EventoResponse>>(
+            eventoService.listarEventos(pageable), 
+            HttpStatus.OK
+        );
     }
     
     @GetMapping("/filtro")
-    public ResponseEntity<Page<Evento>> listarEventosFiltro (@QuerydslPredicate(root = Evento.class) Predicate predicate, Pageable pageable) {
-        return new ResponseEntity<Page<Evento>>(eventoService.listarEventosFiltro(predicate, pageable), HttpStatus.OK);
+    public ResponseEntity<Page<EventoResponse>> listarEventosFiltro (@QuerydslPredicate(root = Evento.class) Predicate predicate, Pageable pageable) {
+        return new ResponseEntity<Page<EventoResponse>>(
+            eventoService.listarEventosFiltro(predicate, pageable), 
+            HttpStatus.OK
+        );
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> editarEvento (@PathVariable long id, @RequestBody @Valid EventoRequest dto) {
         eventoService.editarEvento(id, dto.paraEntidade(true));  
-        return new ResponseEntity<String>("Evento " + dto.nome() + " editado com sucesso!", HttpStatus.OK);
+
+        return new ResponseEntity<String>(
+            "Evento " + dto.nome() + " editado com sucesso!", 
+            HttpStatus.OK
+        );
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletarEvento (@PathVariable long id) {
         eventoService.deletarEvento(id); 
-        return new ResponseEntity<String>("Evento com id " + id + " deletado com sucesso!", HttpStatus.OK);
+
+        return new ResponseEntity<String>(
+            "Evento com id " + id + " deletado com sucesso!", 
+            HttpStatus.OK
+        );
     }
 }
