@@ -1,4 +1,4 @@
-package com.oxentepass.oxentepass.controller.DTOs;
+package com.oxentepass.oxentepass.controller.request;
 
 import com.oxentepass.oxentepass.entity.Tag;
 
