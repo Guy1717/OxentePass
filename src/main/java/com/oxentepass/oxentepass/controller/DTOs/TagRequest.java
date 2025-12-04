@@ -4,7 +4,7 @@ import com.oxentepass.oxentepass.entity.Tag;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record CriarTagDTO(
+public record TagRequest(
     @NotBlank(message = "A nova tag deve ter um nome.")
     String tag
 ) {
