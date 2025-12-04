@@ -3,7 +3,7 @@ package com.oxentepass.oxentepass.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oxentepass.oxentepass.controller.DTOs.CriarTagDTO;
+import com.oxentepass.oxentepass.controller.DTOs.TagRequest;
 import com.oxentepass.oxentepass.entity.Tag;
 import com.oxentepass.oxentepass.service.TagService;
 import com.querydsl.core.types.Predicate;
@@ -30,7 +30,7 @@ public class TagController {
     private TagService tagService;
 
     @PostMapping
-    public ResponseEntity<String> criarTag(@RequestBody @Valid CriarTagDTO dto) { 
+    public ResponseEntity<String> criarTag(@RequestBody @Valid TagRequest dto) { 
         tagService.criarTag(dto.paraEntidade());        
         return new ResponseEntity<String>("Tag criada com sucesso", HttpStatus.CREATED);
     }
