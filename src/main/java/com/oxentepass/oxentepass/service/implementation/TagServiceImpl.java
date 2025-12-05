@@ -1,4 +1,4 @@
-package com.oxentepass.oxentepass.service;
+package com.oxentepass.oxentepass.service.implementation;
 
 import java.util.Optional;
 
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.oxentepass.oxentepass.entity.Tag;
 import com.oxentepass.oxentepass.exceptions.TagInvalidaException;
 import com.oxentepass.oxentepass.repository.TagRepository;
+import com.oxentepass.oxentepass.service.TagService;
 import com.querydsl.core.types.Predicate;
 
 @Service

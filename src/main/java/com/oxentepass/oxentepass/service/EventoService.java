@@ -3,28 +3,37 @@ package com.oxentepass.oxentepass.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.oxentepass.oxentepass.controller.response.EventoResponse;
 import com.oxentepass.oxentepass.entity.Avaliacao;
 import com.oxentepass.oxentepass.entity.Evento;
 import com.oxentepass.oxentepass.entity.Ingresso;
 import com.oxentepass.oxentepass.entity.PontoVenda;
+import com.oxentepass.oxentepass.entity.Tag;
 import com.querydsl.core.types.Predicate;
 
 public interface EventoService {
+    // Operações Básicas
     public void criarEvento(Evento evento);
-    public Page<Evento> listarEventos(Pageable pageable);
-    public Page<Evento> listarEventosFiltro (Predicate predicate, Pageable pageable);
-    public void editarEvento(Long id, Evento evento); //Talvez faça sentido separar algumas partes da edição (endereço, por exemplo)
-    public void deletarEvento(long id);
+    public Page<EventoResponse> listarEventos(Pageable pageable);
+    public Page<EventoResponse> listarEventosFiltro (Predicate predicate, Pageable pageable);
+    public void editarEvento(Long idEvento, Evento evento);
+    public void deletarEvento(long idEvento);
     // Tags
-    public void adicionarTag(long idEvento, long idTag); //Sobrecarga talvez faça sentido (add tag existente ou criar nova tag)
+    public void adicionarTagExistente(long idEvento, long idTag); // Adição de Tag existente
+    public void adicionarTagNova(long idEvento, Tag tag);    // Criação de nova Tag
     public void removerTag(long idEvento, long idTag);
     // Ingressos
-    public void adicionarIngresso(long id, Ingresso Ingresso);
-    public void removerIngresso(long id, Ingresso Ingresso);
+    public void adicionarIngresso(long idEvento, Ingresso ingresso);
+    public void removerIngresso(long idEvento, long idIngresso);
     // Pontos de venda
-    public void adicionarPontoVenda(long id, PontoVenda pontoVenda);
-    public void removerPontoVenda(long id, PontoVenda pontoVenda);
+    public void adicionarPontoVendaExistente(long idEvento, long idPontoVenda);    // Adição de PontoVenda existente
+    public void adicionarPontoVendaNovo(long idEvento, PontoVenda pontoVenda);// Criação de novo PontoVenda 
+    public void removerPontoVenda(long idEvento, long idPontoVenda);
     // Avaliações
-    public void adicionarAvaliacao(long id, Avaliacao avaliacao);
-    public void removerAvaliacao(long id, Avaliacao avaliacao);
+    public void adicionarAvaliacao(long idEvento, Avaliacao avaliacao);
+    public void removerAvaliacao(long idEvento, long idAvaliacao);
+    // Sub-Eventos
+    public void criarSubevento(long idEvento, Evento subevento);
+    public Page<EventoResponse> listarSubeventos(long idEvento, Pageable pageable);
+    public void removerSubevento(long idEvento, long idSubevento);
 }

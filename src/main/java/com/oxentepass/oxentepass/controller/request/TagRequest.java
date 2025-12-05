@@ -1,0 +1,16 @@
+package com.oxentepass.oxentepass.controller.request;
+
+import com.oxentepass.oxentepass.entity.Tag;
+
+import jakarta.validation.constraints.NotBlank;
+
+public record TagRequest(
+    @NotBlank(message = "A nova tag deve ter um nome.")
+    String tag
+) {
+    public Tag paraEntidade() {
+        Tag tag = new Tag();
+        tag.setTag(this.tag);
+        return tag;
+    }
+}
