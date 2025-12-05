@@ -161,4 +161,17 @@ public class EventoController {
             HttpStatus.OK
         );
     }
+
+    //Avaliações
+    @PatchMapping("/{idEvento}/addAvaliacao") //Adicionar DTO de entrada
+    public ResponseEntity<String> adicionarAvaliacao (@PathVariable long idEvento) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'adicionarAvaliacao'");
+    }
+
+    @PatchMapping("/{idEvento}/removerAvaliacao") //Adicionar DTO de entrada
+    public ResponseEntity<String> removerAvaliacao (@PathVariable long idEvento) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removerAvaliacao'");
+    }
 }
