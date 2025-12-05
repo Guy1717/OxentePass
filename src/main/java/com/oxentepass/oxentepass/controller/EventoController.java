@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oxentepass.oxentepass.controller.request.EventoRequest;
+import com.oxentepass.oxentepass.controller.request.TagRequest;
 import com.oxentepass.oxentepass.controller.response.EventoResponse;
 import com.oxentepass.oxentepass.entity.Evento;
 import com.oxentepass.oxentepass.service.EventoService;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -85,6 +87,37 @@ public class EventoController {
 
         return new ResponseEntity<String>(
             "Evento com id " + id + " deletado com sucesso!", 
+            HttpStatus.OK
+        );
+    }
+
+    //Tags
+    @PatchMapping("/{idEvento}/addTag/{idTag}")
+    public ResponseEntity<String> adicionarTagExistente (@PathVariable long idEvento, @PathVariable long idTag) {
+        eventoService.adicionarTagExistente(idEvento, idTag);
+
+        return new ResponseEntity<String>(
+            "Tag com id " + idTag + " adicionada ao evento com id " + idEvento + " com sucesso!", 
+            HttpStatus.OK
+        );
+    }
+
+    @PatchMapping("/{idEvento}/addTag")
+    public ResponseEntity<String> adicionarTagNova (@PathVariable long idEvento, @RequestBody TagRequest dto) {
+        eventoService.adicionarTagNova(idEvento, dto.paraEntidade());
+
+        return new ResponseEntity<String>(
+            "Tag " + dto.tag() + " adicionada ao evento com id " + idEvento + " com sucesso!", 
+            HttpStatus.OK
+        );
+    }
+
+    @PatchMapping("/{idEvento}/removerTag/{idTag}")
+    public ResponseEntity<String> removerTag (@PathVariable long idEvento, @PathVariable long idTag) {
+        eventoService.removerTag(idEvento, idTag);
+
+        return new ResponseEntity<String>(
+            "Tag com id " + idTag + " removida do evento com id " + idEvento + " com sucesso!", 
             HttpStatus.OK
         );
     }
