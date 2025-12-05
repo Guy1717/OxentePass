@@ -121,4 +121,17 @@ public class EventoController {
             HttpStatus.OK
         );
     }
+
+    //Ingressos
+    @PatchMapping("/{idEvento}/addIngresso") //Adicionar DTO de entrada
+    public ResponseEntity<String> adicionarIngresso (@PathVariable long idEvento) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'adicionarIngresso'");
+    }
+
+    @PatchMapping("/{idEvento}/removerIngresso/{idIngresso}")
+    public ResponseEntity<String> removerIngresso (@PathVariable long idEvento, @PathVariable long idIngresso) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removerIngresso'");
+    }
 }
