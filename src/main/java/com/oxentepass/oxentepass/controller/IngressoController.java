@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.oxentepass.oxentepass.entity.Ingresso;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 @RestController
@@ -39,8 +41,8 @@ public class IngressoController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<Iterable<Ingresso>> listarTodosIngressos () {
-        return new ResponseEntity<Iterable<Ingresso>>(ingressoService.listarTodosIngressos(), HttpStatus.OK);
+    public ResponseEntity<Page<Ingresso>> listarTodosIngressos (Pageable pageable) {
+        return new ResponseEntity<Page<Ingresso>>(ingressoService.listarTodosIngressos(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/buscar/{idIngresso}")
@@ -54,8 +56,8 @@ public class IngressoController {
     }
 
     @GetMapping("/disponivel/{idEvento}")
-    public ResponseEntity<Ingresso> quantidadeIngressosDisponiveis (@PathVariable Long idEvento) {
-        return new ResponseEntity<Ingresso>(ingressoService.ingressosDisponiveis(idEvento), HttpStatus.OK);
+    public ResponseEntity<Page<Ingresso>> quantidadeIngressosDisponiveis (@PathVariable Long idEvento, Pageable pageable) {
+        return new ResponseEntity<Page<Ingresso>>(ingressoService.ingressosDisponiveis(idEvento, pageable), HttpStatus.OK);
     }
 
 }

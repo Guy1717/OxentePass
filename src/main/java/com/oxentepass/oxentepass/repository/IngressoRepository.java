@@ -10,7 +10,6 @@ import com.oxentepass.oxentepass.entity.Ingresso;
 @Repository
 public interface IngressoRepository extends JpaRepository<Ingresso, Long> { 
 
-    public Optional<Ingresso> findByTipo(String tipo);
-    public Optional<Ingresso> findByEventoId(Long idEvento);
+    public Optional<Ingresso> findByTipo(String tipo);	
     
 }

@@ -2,9 +2,12 @@ package com.oxentepass.oxentepass.service.implementation;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.oxentepass.oxentepass.entity.Ingresso;
+import com.oxentepass.oxentepass.repository.EventoRepository;
 import com.oxentepass.oxentepass.repository.IngressoRepository;
 import com.oxentepass.oxentepass.service.IngressoService;
 
@@ -14,6 +17,9 @@ public class IngressoServiceImpl implements IngressoService {
     @Autowired
     private IngressoRepository ingressoRepository;
 
+    @Autowired
+    private EventoRepository eventoRepository;
+
     @Override
     public void cadastrarIngresso(Ingresso ingresso) {
         ingressoRepository.save(ingresso);
@@ -21,15 +27,13 @@ public class IngressoServiceImpl implements IngressoService {
 
     @Override
     public void deletarIngresso(Long id) {
-        if(!ingressoRepository.existsById(id)) {
-            throw new IllegalArgumentException("Ingresso com id " + id + " não existe.");
-        }
-        ingressoRepository.deleteById(id);
+        Ingresso ingresso = buscarIngressoPorId(id);
+        ingressoRepository.delete(ingresso);
     }
 
     @Override
-    public Iterable<Ingresso> listarTodosIngressos() {
-        return ingressoRepository.findAll();
+    public Page<Ingresso> listarTodosIngressos(Pageable pageable) {
+        return ingressoRepository.findAll(pageable);
     }
 
     @Override
@@ -54,13 +58,14 @@ public class IngressoServiceImpl implements IngressoService {
     }
 
     @Override
-    public Ingresso ingressosDisponiveis(Long idEvento) {
-        Optional<Ingresso> ingressoBusca = ingressoRepository.findByEventoId(idEvento);
+    public Page<Ingresso> ingressosDisponiveis(Long idEvento, Pageable pageable) {
+        Page<Ingresso> ingressos = eventoRepository.findByEventoId(idEvento, pageable);
 
-        if (ingressoBusca.isEmpty()) {
-            throw new IllegalArgumentException("Ingresso para o evento com id " + idEvento + " não existe.");
+        if (ingressos.isEmpty()) {
+            throw new IllegalArgumentException("Não existem ingressos para o evento de id " + idEvento);
         }
-        return ingressoBusca.get();
+
+        return ingressos;
     }
     
 }
