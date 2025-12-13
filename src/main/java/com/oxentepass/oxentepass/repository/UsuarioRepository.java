@@ -1,5 +1,8 @@
 package com.oxentepass.oxentepass.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
@@ -20,6 +23,8 @@ public interface UsuarioRepository extends
     @Override
     default void customize(QuerydslBindings bindings, QUsuario root) {
 
+        bindings.excluding(root.senha);
+
         bindings.bind(root.id).first((NumberPath<Long> path, Long value) -> path.eq(value));
 
         bindings.bind(root.nome).first((StringPath path, String value) -> path.containsIgnoreCase(value));
@@ -31,7 +36,12 @@ public interface UsuarioRepository extends
 
         bindings.bind(root.email).first((StringPath path, String value) -> path.equalsIgnoreCase(value));
 
-        bindings.excludeUnlistedProperties(true);
-    }
+    };
+
+    List<Usuario> findAll();
+
+    Optional<Usuario> findByCpf(String cpf);
+    
+    Optional<Usuario> findByEmail(String email);
 
 }
