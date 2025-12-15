@@ -1,8 +1,11 @@
 package com.oxentepass.oxentepass.controller.advice;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.core.NestedExceptionUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -41,6 +44,28 @@ public class GlobalControllerAdvice {
 		return new ResponseEntity<ErroResponse>(
             erroResponse, 
             HttpStatus.BAD_REQUEST
+        );
+    }
+
+    // Violações de banco de dados (chaves primárias e estrangeiras)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErroResponse> lidarComBancoDeDados (DataIntegrityViolationException exception, HttpServletRequest request) {
+        ErroResponse erroResponse = new ErroResponse();
+
+        erroResponse.setStatus(409);
+        erroResponse.setErro("Violação de Banco de Dados");
+        erroResponse.setPath(request.getRequestURI());
+
+        Throwable root = NestedExceptionUtils.getRootCause(exception);
+        
+        if (root instanceof SQLException)
+            erroResponse.setMensagem(extrairDetalhe((SQLException)root));
+        else 
+            erroResponse.setMensagem(exception.getMessage());
+
+        return new ResponseEntity<ErroResponse>(
+            erroResponse, 
+            HttpStatus.CONFLICT
         );
     }
 
@@ -119,5 +144,16 @@ public class GlobalControllerAdvice {
             erroResponse, 
             HttpStatus.INTERNAL_SERVER_ERROR
         );
+    }
+
+    // Funções auxiliares
+    private String extrairDetalhe(SQLException ex) {
+        String msg = ex.getMessage();
+        if (msg == null) return null;
+
+        int idx = msg.indexOf("Detalhe:");
+        if (idx == -1) return null;
+
+        return msg.substring(idx + "Detalhe:".length()).trim();
     }
 }
