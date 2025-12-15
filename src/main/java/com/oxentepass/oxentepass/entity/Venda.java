@@ -8,6 +8,8 @@ import java.util.List;
 import com.oxentepass.oxentepass.exceptions.IngressoInvalidoException;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -34,9 +36,19 @@ public class Venda {
     private LocalDateTime dataHoraVenda;
     private BigDecimal valorTotal;
 
+    @Enumerated(EnumType.STRING)
+    private StatusVenda status;
+
+    public enum StatusVenda {
+        ABERTA,
+        FINALIZADA,
+        CANCELADA
+    }
+
     // Construtor
     public Venda () {
         this.ingressos = new ArrayList<IngressoVenda>();
+        this.status = StatusVenda.ABERTA;
     }
 
     // Métodos
@@ -60,20 +72,30 @@ public class Venda {
         this.valorTotal = valorTotal;
     }
 
-    public void setFinalizada(boolean finalizada) {
-        if(finalizada) {
-            this.dataHoraVenda = LocalDateTime.now();
-            calcularValorTotal();
-        } else {
-            this.dataHoraVenda = null;
-            this.valorTotal = BigDecimal.ZERO;
+    public void finalizar() {
+        if (this.status != StatusVenda.ABERTA) {
+            throw new IllegalStateException("A venda só pode ser finalizada se estiver aberta");
         }
+    
+        this.status = StatusVenda.FINALIZADA;
+        this.dataHoraVenda = LocalDateTime.now();
+        calcularValorTotal();
     }
 
-    public void setCancelada(boolean cancelada) {
-        if(cancelada) {
-            this.dataHoraVenda = null;
-            this.valorTotal = BigDecimal.ZERO;
+    public void cancelar() {
+        if (this.status == StatusVenda.CANCELADA) {
+            throw new IllegalStateException("Venda já está cancelada");
+        }
+    
+        devolverIngressos();
+        this.status = StatusVenda.CANCELADA;
+        this.dataHoraVenda = null;
+        this.valorTotal = BigDecimal.ZERO;
+    }
+
+    private void devolverIngressos() {
+        for (IngressoVenda ingressoVenda : ingressos) {
+            ingressoVenda.getIngresso().devolverQuantidade(ingressoVenda.getQuantidade());
         }
     }
 }

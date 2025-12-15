@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oxentepass.oxentepass.controller.request.VendaRequest;
+import com.oxentepass.oxentepass.entity.IngressoVenda;
 import com.oxentepass.oxentepass.entity.Venda;
 import com.oxentepass.oxentepass.service.VendaService;
 
@@ -53,9 +54,10 @@ public class VendaController {
     }
 
     @PutMapping("/adicionaringresso/{id}")
-    public ResponseEntity<Venda> adicionarIngresso(@RequestBody @Valid VendaRequest dto, @PathVariable long id) {
-        Venda vendaAtualizada = vendaService.adicionarIngresso(dto.getIngressos().get(0), id);
-        return new ResponseEntity<Venda>(vendaAtualizada, HttpStatus.OK);
+    public ResponseEntity<Venda> adicionarIngresso(@PathVariable Long id, @RequestBody IngressoVenda ingressoVenda) {
+
+        Venda vendaAtualizada = vendaService.adicionarIngresso(ingressoVenda, id);
+        return ResponseEntity.ok(vendaAtualizada);
     }
 
     @PutMapping("/removeringresso/{id}")

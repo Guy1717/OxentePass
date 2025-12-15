@@ -26,7 +26,7 @@ public class VendaServiceImpl implements VendaService {
    @Override
    public Venda finalizarVenda(long id){
     Venda venda = buscarVendaPorId(id);
-    venda.setFinalizada(true);
+    venda.finalizar();
     return vendaRepository.save(venda);
    }
    
@@ -38,7 +38,7 @@ public class VendaServiceImpl implements VendaService {
    @Override
     public void cancelarVenda(long id) {
         Venda venda = buscarVendaPorId(id);
-        venda.setCancelada(true);
+        venda.cancelar();
         vendaRepository.save(venda);
     }
 
