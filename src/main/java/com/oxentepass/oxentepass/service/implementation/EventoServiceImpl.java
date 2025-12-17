@@ -24,6 +24,7 @@ import com.oxentepass.oxentepass.repository.EventoRepository;
 import com.oxentepass.oxentepass.repository.PontoVendaRepository;
 import com.oxentepass.oxentepass.repository.TagRepository;
 import com.oxentepass.oxentepass.service.EventoService;
+import com.oxentepass.oxentepass.service.IngressoService;
 import com.oxentepass.oxentepass.service.TagService;
 import com.querydsl.core.types.Predicate;
 
@@ -42,6 +43,9 @@ public class EventoServiceImpl implements EventoService {
     //Outros services
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private IngressoService ingressoService;
 
     //Métodos Auxiliares
     private Evento buscarEventoId(long id) {
@@ -178,15 +182,26 @@ public class EventoServiceImpl implements EventoService {
 
     // Ingressos
     @Override
-    public void adicionarIngresso(long idEvento, Ingresso ingresso) { // Precisa do Service de Ingresso
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'adicionarIngresso'");
+    @Transactional
+    public void adicionarIngresso(long idEvento, Ingresso ingresso) {
+        Evento evento = buscarEventoId(idEvento);
+
+        ingressoService.cadastrarIngresso(ingresso);
+
+        evento.addIngresso(ingresso);
+        eventoRepository.save(evento);
     }
 
     @Override
-    public void removerIngresso(long idEvento, long idIngresso) { // Precisa do Service de Ingresso (caso for deletar o ingresso)
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removerIngresso'");
+    @Transactional
+    public void removerIngresso(long idEvento, long idIngresso) {
+        Evento evento = buscarEventoId(idEvento);
+        Ingresso ingresso = ingressoService.buscarIngressoPorId(idIngresso);
+
+        ingressoService.deletarIngresso(idIngresso);
+
+        evento.removerIngresso(ingresso);
+        eventoRepository.save(evento);
     }
 
     // Pontos de Venda

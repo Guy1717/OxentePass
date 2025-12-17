@@ -34,7 +34,8 @@ public interface EventoRepository extends JpaRepository<Evento, Long>,
     */
     @Query("select s from EventoComposto ec join ec.subeventos s where ec.id = :id")
     Page<Evento> findSubeventosByParentId(@Param("id") long id, Pageable pageable);
-                                        
+                 
+    
     @NativeQuery("SELECT EXISTS " +
                 "(SELECT 1 FROM evento_composto_subeventos WHERE subeventos_id = :id)")
     boolean isSubevento(@Param("id") long id);
@@ -48,7 +49,7 @@ public interface EventoRepository extends JpaRepository<Evento, Long>,
     */                                        
     @Query("SELECT ec FROM EventoComposto ec JOIN ec.subeventos ecs WHERE ecs.id = :id")
     Optional<Evento> findEventoPaiBySubeventoId(@Param("id") long id);
-                                            
+
     @Override
     default void customize(QuerydslBindings bindings, QEvento root) {
         // Bind para ID
@@ -100,6 +101,11 @@ public interface EventoRepository extends JpaRepository<Evento, Long>,
         bindings.bind(root.organizador.id)
                 .as("organizador")
                 .first((NumberPath<Long> path, Long value) -> path.eq(value));
+
+        // Bind para cidade (seleção por nome da cidade)
+        bindings.bind(root.cidade.nome)
+                .as("cidade")
+                .first((StringPath path, String value) -> path.containsIgnoreCase(value));
     }
 
 }
