@@ -3,6 +3,8 @@ package com.oxentepass.oxentepass.service.implementation;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.oxentepass.oxentepass.entity.Usuario;
@@ -21,6 +23,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public void cadastrarUsuario(Usuario usuario) {
 
+        String cpfLimpo = usuario.getCpf().replaceAll("\\D", "");
+        usuario.setCpf(cpfLimpo);
+
         Optional<Usuario> existingUser = repository.findByCpf(usuario.getCpf());
 
         if (existingUser.isPresent()) {
@@ -33,22 +38,20 @@ public class UsuarioServiceImpl implements UsuarioService {
     };
 
     @Override
-    public Boolean autenticarUsuario(String email, String senha) {
-        Optional<Usuario> optionalUser = repository.findByEmail(email);
+    public void loginUsuario(String cpf, String senha) {
+        Optional<Usuario> optionalUser = repository.findByCpf(cpf);
 
         if (optionalUser.isEmpty()) {
-            throw new RecursoNaoEncontradoException("Nenhum usuário encontrado para o e-mail" + email);
+            throw new RecursoNaoEncontradoException("Nenhum usuário encontrado para o cpf " + cpf);
         }
 
         if (!senha.equals(optionalUser.get().getSenha())) {
             throw new EstadoInvalidoException("Senha incorreta para este usuário");
         }
-
-        return true;
     };
 
     @Override
-    public void atualizarDadosUsuario(Long id, Usuario dados) {
+    public void editarUsuario(long id, Usuario dados) {
 
         Optional<Usuario> optionalUser = repository.findById(id);
 
@@ -67,5 +70,21 @@ public class UsuarioServiceImpl implements UsuarioService {
         repository.save(user);
     };
 
+    @Override
+    public void deletarUsuario(long id) {
+
+        Optional<Usuario> user = repository.findById(id);
+
+        if (user.isEmpty()) {
+            throw new RecursoNaoEncontradoException("O usuário com id " + id + " não foi encontrado!");
+        }
+
+        repository.delete(user.get());
+    }
+
+    @Override
+    public Page<Usuario> listarUsuarios(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
 
 }

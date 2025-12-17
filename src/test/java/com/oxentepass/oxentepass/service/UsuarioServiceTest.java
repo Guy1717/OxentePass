@@ -1,8 +1,8 @@
 package com.oxentepass.oxentepass.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -76,7 +76,7 @@ public class UsuarioServiceTest {
 
         repository.save(user);
 
-        assertTrue(service.autenticarUsuario("guy.fawkes@email.com", "vendetta"));
+        assertDoesNotThrow(() -> service.loginUsuario("17617617617", "vendetta"));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class UsuarioServiceTest {
         repository.save(user);
 
         assertThrows(RecursoNaoEncontradoException.class,
-                () -> service.autenticarUsuario("guy.fawkess@email.com", "vendetta"));
+                () -> service.loginUsuario("17617617617", "vendetta"));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class UsuarioServiceTest {
         repository.save(user);
 
         assertThrows(EstadoInvalidoException.class,
-                () -> service.autenticarUsuario("guy.fawkes@email.com", "vendeta"));
+                () -> service.loginUsuario("17617617617", "vendeta"));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class UsuarioServiceTest {
         user.setEmail("guido.fawkes@email.com");
         user.setSenha("VforVendetta");
 
-        service.atualizarDadosUsuario(1L, user);
+        service.editarUsuario(1L, user);
 
         List<Usuario> usuariosPosteriores = repository.findAll();
         String nomeUsuarioAtualizado = usuariosPosteriores.get(0).getNome();
@@ -141,8 +141,4 @@ public class UsuarioServiceTest {
 
     }
 
-    @Test
-    public void deveRejeitarAtualizacaoUsuarioTest(){
-        
-    }
 }
