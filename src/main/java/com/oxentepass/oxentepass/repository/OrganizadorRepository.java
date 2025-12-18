@@ -33,5 +33,4 @@ public interface OrganizadorRepository extends
         });
     }
 
-    Optional<Organizador> findByCnpj(String cnpj);
 }
