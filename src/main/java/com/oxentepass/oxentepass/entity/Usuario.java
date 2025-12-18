@@ -5,7 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 @Entity
 @Data
@@ -13,6 +15,7 @@ import lombok.Data;
 public class Usuario {
     @Id
     @GeneratedValue
+    @Setter(AccessLevel.NONE)
     private long id;
     private String nome;
     private String cpf;

@@ -4,10 +4,15 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.NativeQuery;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.oxentepass.oxentepass.entity.Evento;
@@ -20,6 +25,30 @@ import com.querydsl.core.types.dsl.StringPath;
 public interface EventoRepository extends JpaRepository<Evento, Long>, 
                                           QuerydslPredicateExecutor<Evento>,
                                           QuerydslBinderCustomizer<QEvento> {
+    /* 
+    Query no padrão SQL:
+       SELECT e.* 
+       FROM evento as e 
+       JOIN evento_composto_subeventos as ecs
+       ON e.id = ecs.subeventos_id AND ecs.evento_composto_id = :id
+    */
+    @Query("select s from EventoComposto ec join ec.subeventos s where ec.id = :id")
+    Page<Evento> findSubeventosByParentId(@Param("id") long id, Pageable pageable);
+                 
+    
+    @NativeQuery("SELECT EXISTS " +
+                "(SELECT 1 FROM evento_composto_subeventos WHERE subeventos_id = :id)")
+    boolean isSubevento(@Param("id") long id);
+
+    /* 
+    Query no padrão SQL:
+       SELECT e.* 
+       FROM evento as e 
+       JOIN evento_composto_subeventos as ecs
+       ON e.id = ecs.evento_composto_id AND ecs.subeventos_id = :id
+    */                                        
+    @Query("SELECT ec FROM EventoComposto ec JOIN ec.subeventos ecs WHERE ecs.id = :id")
+    Optional<Evento> findEventoPaiBySubeventoId(@Param("id") long id);
 
     @Override
     default void customize(QuerydslBindings bindings, QEvento root) {
@@ -72,6 +101,11 @@ public interface EventoRepository extends JpaRepository<Evento, Long>,
         bindings.bind(root.organizador.id)
                 .as("organizador")
                 .first((NumberPath<Long> path, Long value) -> path.eq(value));
+
+        // Bind para cidade (seleção por nome da cidade)
+        bindings.bind(root.cidade.nome)
+                .as("cidade")
+                .first((StringPath path, String value) -> path.containsIgnoreCase(value));
     }
 
 }

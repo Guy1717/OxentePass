@@ -3,7 +3,9 @@ package com.oxentepass.oxentepass.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.oxentepass.oxentepass.exceptions.TagInvalidaException;
+import com.oxentepass.oxentepass.exceptions.EstadoInvalidoException;
+import com.oxentepass.oxentepass.exceptions.RecursoDuplicadoException;
+import com.oxentepass.oxentepass.exceptions.RecursoNaoEncontradoException;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -29,6 +31,9 @@ public abstract class Evento {
 
     @ManyToOne
     private Organizador organizador;
+
+    @ManyToOne
+    private Cidade cidade;
     
     @ManyToMany
     private List<Tag> tags;
@@ -51,24 +56,78 @@ public abstract class Evento {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Avaliacao> avaliacoes;
 
+    private double mediaAvaliacao;
+
+    private int altura; // Atributo para limitar possível árvore de sub-eventos
+
     //Métodos
     public void addTag(Tag tag) {
         if (this.tags.contains(tag))
-            throw new TagInvalidaException("A tag informada já consta no evento " + this.nome + ".");
+            throw new EstadoInvalidoException("A tag informada já consta no evento " + this.nome + ".");
 
         this.tags.add(tag);
     }
 
     public void removerTag(Tag tag) {
         if (!this.tags.remove(tag)) 
-            throw new TagInvalidaException("A tag informada não consta no evento " + this.nome + ".");
+            throw new RecursoNaoEncontradoException("A tag informada não consta no evento " + this.nome + ".");
     }
 
-    public double mediaAvaliacoes() {
+    public void addIngresso(Ingresso ingresso) {
+        if (this.ingressos.contains(ingresso))
+            throw new EstadoInvalidoException("O ingresso informado já consta no evento " + this.nome + ".");
+
+        this.ingressos.add(ingresso);
+    }
+
+    public void removerIngresso(Ingresso ingresso) {
+        if (!this.ingressos.remove(ingresso)) 
+            throw new RecursoNaoEncontradoException("O ingresso informado não consta no evento " + this.nome + ".");
+    }
+
+    public void addPontoVenda(PontoVenda pontoVenda) {
+        if (this.pontosVenda.contains(pontoVenda))
+            throw new EstadoInvalidoException("O ponto de venda informado já consta no evento " + this.nome + ".");
+
+        this.pontosVenda.add(pontoVenda);
+    }
+
+    public void removerPontoVenda(PontoVenda pontoVenda) {
+        if (!this.pontosVenda.remove(pontoVenda)) 
+            throw new RecursoNaoEncontradoException("O ponto de venda informado não consta no evento " + this.nome + ".");
+    }
+
+    public void addAvaliacao(Avaliacao avaliacao) {
+        if (this.avaliacoes.contains(avaliacao))
+            throw new RecursoDuplicadoException("A avaliação já foi publicada.");
+
+        this.avaliacoes.add(avaliacao);
+
+        calcularMediaAvaliacao();
+    }
+
+    public void removerAvaliacao(long idAvaliacao) {
+        Avaliacao busca = null;
+        for (Avaliacao aval : this.avaliacoes) {
+            if (aval.getId() == idAvaliacao) {
+                busca = aval;
+                break;
+            }
+        }
+
+        if (busca == null) 
+            throw new RecursoNaoEncontradoException("A avaliação informada não consta no evento " + this.nome + ".");
+
+        avaliacoes.remove(busca);
+
+        calcularMediaAvaliacao();
+    }
+
+    private void calcularMediaAvaliacao() {
         double total = 0;
         for (Avaliacao aval : this.avaliacoes) 
             total += aval.getNota();
 
-        return (double)(total / this.avaliacoes.size());
+        this.mediaAvaliacao = (double)(total / this.avaliacoes.size());
     }
 }
