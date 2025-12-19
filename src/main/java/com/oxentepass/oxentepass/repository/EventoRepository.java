@@ -16,6 +16,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.oxentepass.oxentepass.entity.Evento;
+import com.oxentepass.oxentepass.entity.Imagem;
 import com.oxentepass.oxentepass.entity.QEvento;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberPath;
@@ -49,6 +50,16 @@ public interface EventoRepository extends JpaRepository<Evento, Long>,
     */                                        
     @Query("SELECT ec FROM EventoComposto ec JOIN ec.subeventos ecs WHERE ecs.id = :id")
     Optional<Evento> findEventoPaiBySubeventoId(@Param("id") long id);
+
+    /* 
+    Query no padrão SQL:
+       SELECT i.* 
+       FROM imagem as i 
+       JOIN evento_imagens as ei
+       ON i.id = ei.imagens_id AND ei.evento_id = :id
+    */
+   @Query("select i from Evento e join e.imagens i where e.id = :id")
+   Page<Imagem> findImagemByEventoId(@Param("id") long id, Pageable pageable);
 
     @Override
     default void customize(QuerydslBindings bindings, QEvento root) {
