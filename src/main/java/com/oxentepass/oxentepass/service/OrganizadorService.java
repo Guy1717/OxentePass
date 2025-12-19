@@ -1,11 +1,15 @@
 package com.oxentepass.oxentepass.service;
 
-import com.oxentepass.oxentepass.entity.Organizador;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface OrganizadorService {
-    void cadastrarOrganizador(long usuarioId, Organizador organizador);
+import com.oxentepass.oxentepass.controller.request.OrganizadorRequest;
+import com.oxentepass.oxentepass.entity.Organizador;
 
-    Page<Organizador> listarOrganizadores(Pageable pageable);
+public interface OrganizadorService {
+
+    public void promoverUsuario(OrganizadorRequest dados);
+
+    public Page<Organizador> listarOrganizadores(Pageable pageable);
+
 }

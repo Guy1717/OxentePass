@@ -1,47 +1,54 @@
 package com.oxentepass.oxentepass.service.implementation;
 
-import com.oxentepass.oxentepass.entity.Organizador;
-import com.oxentepass.oxentepass.entity.Usuario;
-import com.oxentepass.oxentepass.exceptions.EstadoInvalidoException;
-import com.oxentepass.oxentepass.exceptions.RecursoNaoEncontradoException;
-import com.oxentepass.oxentepass.repository.OrganizadorRepository;
-import com.oxentepass.oxentepass.repository.UsuarioRepository;
-import com.oxentepass.oxentepass.service.OrganizadorService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.oxentepass.oxentepass.controller.request.OrganizadorRequest;
+import com.oxentepass.oxentepass.entity.Organizador;
+import com.oxentepass.oxentepass.entity.Usuario;
+import com.oxentepass.oxentepass.exceptions.RecursoDuplicadoException;
+import com.oxentepass.oxentepass.exceptions.RecursoNaoEncontradoException;
+import com.oxentepass.oxentepass.repository.OrganizadorRepository;
+import com.oxentepass.oxentepass.repository.UsuarioRepository;
+import com.oxentepass.oxentepass.service.OrganizadorService;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @Service
 public class OrganizadorServiceImpl implements OrganizadorService {
 
     @Autowired
-    private OrganizadorRepository organizadorRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private OrganizadorRepository organizadorRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     @Transactional
-    public void cadastrarOrganizador(long usuarioId, Organizador organizador) {
+    public void promoverUsuario(OrganizadorRequest dados) {
+        Usuario usuario = usuarioRepository.findById(dados.usuarioId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário com id " + dados.usuarioId() + " não encontrado."));
 
-        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(
-                () -> new RecursoNaoEncontradoException("Usuário com id " + usuarioId + " não encontrado"));
-
-        if (organizadorRepository.existsById(usuarioId)) {
-            throw new EstadoInvalidoException("Este usuário já é um organizador");
+        if (organizadorRepository.existsById(usuario.getId())) {
+            throw new RecursoDuplicadoException("Usuário com id " + usuario.getId() + " já é um organizador.");
         }
 
-        String telefoneLimpo = organizador.getTelefone().replaceAll("\\D", "");
-        String cnpjLimpo = organizador.getCnpj().replaceAll("\\D", "");
+        // 3. Query Nativa para inserção na tabela filha (Herança JOINED)
+        String sql = "INSERT INTO organizador (id, cnpj, telefone, biografia, nota_reputacao) VALUES (:id, :cnpj, :tel, :bio, 5.0)";
 
-        organizador.setUsuario(usuario);
-        organizador.setCnpj(cnpjLimpo);
-        organizador.setTelefone(telefoneLimpo);
-
-        organizadorRepository.save(organizador);
+        entityManager.createNativeQuery(sql)
+                .setParameter("id", usuario.getId())
+                .setParameter("cnpj", dados.cnpj())
+                .setParameter("tel", dados.telefone())
+                .setParameter("bio", dados.biografia())
+                .executeUpdate();
     }
 
     @Override
