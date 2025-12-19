@@ -7,6 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.oxentepass.oxentepass.entity.Ingresso;
+import com.oxentepass.oxentepass.exceptions.IdInvalidoException;
+import com.oxentepass.oxentepass.exceptions.IndisponivelException;
+import com.oxentepass.oxentepass.exceptions.TipoInvalidoException;
 import com.oxentepass.oxentepass.repository.IngressoRepository;
 import com.oxentepass.oxentepass.service.IngressoService;
 
@@ -37,7 +40,7 @@ public class IngressoServiceImpl implements IngressoService {
         Optional<Ingresso> ingressoBusca = ingressoRepository.findById(id);
 
         if (ingressoBusca.isEmpty()) 
-            throw new IllegalArgumentException("Ingresso com id " + id + " não existe.");
+            throw new IdInvalidoException("Ingresso com id " + id + " não existe.");
         
         return ingressoBusca.get();
     }
@@ -47,7 +50,7 @@ public class IngressoServiceImpl implements IngressoService {
         Optional<Ingresso> ingressoBusca = ingressoRepository.findByTipo(tipo);
 
         if (ingressoBusca.isEmpty()) 
-            throw new IllegalArgumentException("Ingresso do tipo " + tipo + " não existe.");
+            throw new TipoInvalidoException("Ingresso do tipo " + tipo + " não existe.");
         
         return ingressoBusca.get();
     }
@@ -57,7 +60,7 @@ public class IngressoServiceImpl implements IngressoService {
         Page<Ingresso> ingressos = ingressoRepository.findByEventoId(idEvento, pageable);
 
         if (ingressos.isEmpty()) 
-            throw new IllegalArgumentException("Não existem ingressos para o evento de id " + idEvento);
+            throw new IndisponivelException("Não existem ingressos para o evento de id " + idEvento);
 
         return ingressos;
     }
