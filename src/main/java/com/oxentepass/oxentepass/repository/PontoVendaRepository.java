@@ -23,14 +23,20 @@ public interface PontoVendaRepository extends
 
         bindings.bind(root.detalhes).first((StringPath path, String value) -> path.containsIgnoreCase(value));
 
-        bindings.bind(root.endereco.cep).first((StringPath path, String value) -> {
-            String onlyDigitsCep = value.replaceAll("\\D", "");
-            return path.eq(onlyDigitsCep);
-        });
+        bindings.bind(root.endereco.cep)
+                .as("cep")
+                .first((StringPath path, String value) -> {
+                    String onlyDigitsCep = value.replaceAll("\\D", "");
+                    return path.eq(onlyDigitsCep);
+                });
 
-        bindings.bind(root.endereco.bairro).first((StringPath path, String value) -> path.containsIgnoreCase(value));
+        bindings.bind(root.endereco.bairro)
+                .as("bairro")
+                .first((StringPath path, String value) -> path.containsIgnoreCase(value));
 
-        bindings.bind(root.endereco.rua).first((StringPath path, String value) -> path.containsIgnoreCase(value));
+        bindings.bind(root.endereco.rua)
+                .as("rua")
+                .first((StringPath path, String value) -> path.containsIgnoreCase(value));
     }
 
     boolean existsByNomeAndEnderecoCepAndEnderecoNumero(String nome, String cep, int numero);
