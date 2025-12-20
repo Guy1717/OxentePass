@@ -292,6 +292,8 @@ public class EventoServiceImpl implements EventoService {
         Evento evento = buscarEventoId(idEvento);
 
         evento.removerAvaliacao(idAvaliacao);
+
+        eventoRepository.save(evento);
     }
 
     // Sub-Eventos
