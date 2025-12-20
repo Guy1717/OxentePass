@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oxentepass.oxentepass.controller.request.VendaRequest;
+import com.oxentepass.oxentepass.controller.response.VendaResponse;
 import com.oxentepass.oxentepass.entity.IngressoVenda;
 import com.oxentepass.oxentepass.entity.Venda;
 import com.oxentepass.oxentepass.service.VendaService;
+import com.querydsl.core.types.Predicate;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,10 +51,10 @@ public class VendaController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<Venda>> listarTodasVendas(Pageable pageable) {
-        return new ResponseEntity<Page<Venda>>(
-            vendaService.listarTodasVendas(pageable), 
-            HttpStatus.OK
+    public ResponseEntity<Page<VendaResponse>> listarTodasVendas(Predicate predicate, Pageable pageable) {
+        
+        return ResponseEntity.ok(
+            vendaService.listarTodasVendas(predicate, pageable).map(VendaResponse::paraDTO)
         );
     }    
 
@@ -67,35 +69,34 @@ public class VendaController {
     }
 
     @PutMapping("/adicionaringresso/{id}")
-    public ResponseEntity<Venda> adicionarIngresso(@PathVariable Long id, @RequestBody IngressoVenda ingressoVenda) {
-        Venda vendaAtualizada = vendaService.adicionarIngresso(ingressoVenda, id);
+    public ResponseEntity<VendaResponse> adicionarIngresso(@PathVariable Long id, @RequestBody IngressoVenda ingressoVenda) {
         
-        return ResponseEntity.ok(vendaAtualizada);
+        return ResponseEntity.ok(
+            VendaResponse.paraDTO(vendaService.adicionarIngresso(ingressoVenda, id))
+        );
     }
 
-    @PutMapping("/removeringresso/{id}")
-    public ResponseEntity<Venda> removerIngresso(@RequestBody @Valid VendaRequest dto, @PathVariable long id) {
-        Venda vendaAtualizada = vendaService.removerIngresso(dto.getIngressos().get(0), id);
-        
-        return new ResponseEntity<Venda>(
-            vendaAtualizada, 
-            HttpStatus.OK
+    @PutMapping("/removeringresso/{id}/{idIngressoVenda}")
+    public ResponseEntity<VendaResponse> removerIngresso(@PathVariable long idIngressoVenda, @PathVariable Long id) {
+    
+        return ResponseEntity.ok(
+            VendaResponse.paraDTO(vendaService.removerIngresso(idIngressoVenda, id))
         );
     }
     
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<Venda> buscarVendaPorId(@PathVariable long id) {
-        return new ResponseEntity<Venda>(
-            vendaService.buscarVendaPorId(id), 
-            HttpStatus.OK
+    public ResponseEntity<VendaResponse> buscarVendaPorId(@PathVariable long id) {
+        
+        return ResponseEntity.ok(
+            VendaResponse.paraDTO(vendaService.buscarVendaPorId(id))
         );
     }
 
     @GetMapping("/buscar/usuario/{idUsuario}")
-    public ResponseEntity<Page<Venda>> buscarVendaPorUsuario(@PathVariable Long idUsuario, Pageable pageable) {
-        return new ResponseEntity<Page<Venda>>(
-            vendaService.buscarVendaPorUsuario(idUsuario, pageable), 
-            HttpStatus.OK
+    public ResponseEntity<Page<VendaResponse>> buscarVendaPorUsuario(@PathVariable Long idUsuario, Predicate predicate, Pageable pageable) {
+
+        return ResponseEntity.ok(
+            vendaService.buscarVendaPorUsuario(idUsuario, predicate, pageable).map(VendaResponse::paraDTO)
         );
     }
 }
