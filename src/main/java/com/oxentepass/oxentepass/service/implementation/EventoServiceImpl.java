@@ -92,13 +92,13 @@ public class EventoServiceImpl implements EventoService {
         
         return pontoVendaRepository.existsByNomeAndEnderecoCepAndEnderecoNumero(nome, cep, numero);
     }
-    
-    private boolean pontoVendaContido(PontoVenda pontoVenda){
-        String nome = pontoVenda.getNome();
-        String cep = pontoVenda.getEndereco().getCep();
-        int numero = pontoVenda.getEndereco().getNumero();
-        
-        return eventoRepository.existsByPontoVendaNomeAndPontoVendaEnderecoCepAndPontoVendaEnderecoNumero(nome, cep, numero);
+
+    private boolean pontoVendaContido(PontoVenda pontoVenda) {
+        return eventoRepository.existsByPontosVendaNomeAndPontosVendaEnderecoCepAndPontosVendaEnderecoNumero(
+            pontoVenda.getNome(),
+            pontoVenda.getEndereco().getCep(),
+            pontoVenda.getEndereco().getNumero()
+        );
     }
 
     //Métodos da Interface
@@ -283,6 +283,8 @@ public class EventoServiceImpl implements EventoService {
         Evento evento = buscarEventoId(idEvento);
 
         evento.addAvaliacao(avaliacao);
+
+        eventoRepository.save(evento);
     }
 
     @Override
