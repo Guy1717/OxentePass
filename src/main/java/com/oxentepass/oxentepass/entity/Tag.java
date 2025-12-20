@@ -12,4 +12,5 @@ public class Tag {
     @GeneratedValue
     private long id;
     private String tag;
+    
 }

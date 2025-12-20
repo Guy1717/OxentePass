@@ -90,6 +90,10 @@ public abstract class Evento {
             throw new RecursoNaoEncontradoException("O ingresso informado não consta no evento " + this.nome + ".");
     }
 
+    public boolean possuiTagGratuidade() {
+        return this.tags.stream().anyMatch(tag -> tag.getTag().equalsIgnoreCase("GRATUITO"));
+    }
+
     // Ponto de Venda
     public void addPontoVenda(PontoVenda pontoVenda) {
         if (this.pontosVenda.contains(pontoVenda))

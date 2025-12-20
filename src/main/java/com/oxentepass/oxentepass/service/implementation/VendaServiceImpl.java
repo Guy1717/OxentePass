@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import com.oxentepass.oxentepass.entity.IngressoVenda;
 import com.oxentepass.oxentepass.entity.Pagamento;
 import com.oxentepass.oxentepass.entity.Venda;
+import com.oxentepass.oxentepass.exceptions.RecursoNaoEncontradoException;
 import com.oxentepass.oxentepass.repository.VendaRepository;
 import com.oxentepass.oxentepass.service.VendaService;
+import com.querydsl.core.types.Predicate;
 
 @Service
 public class VendaServiceImpl implements VendaService {
@@ -36,6 +38,11 @@ public class VendaServiceImpl implements VendaService {
     }
 
     @Override
+    public Page<Venda> filtrarVendas(Predicate predicate, Pageable pageable) {
+        return vendaRepository.findAll(predicate, pageable);
+    }
+
+    @Override
     public void cancelarVenda(long id) {
         Venda venda = buscarVendaPorId(id);
         venda.cancelar();
@@ -46,14 +53,14 @@ public class VendaServiceImpl implements VendaService {
     public Venda buscarVendaPorId(long id) {
         Optional<Venda> venda = vendaRepository.findById(id);
         if (venda.isEmpty()) 
-            throw new RuntimeException("Venda não encontrada com o ID: " + id);
+            throw new RecursoNaoEncontradoException("Venda não encontrada com o ID: " + id);
         
         return venda.get();
     }
 
     @Override
-    public Page<Venda> buscarVendaPorUsuario(Long idUsuario, Pageable pageable) {
-        return vendaRepository.findByUsuarioId(idUsuario, pageable);
+    public Page<Venda> buscarVendaPorUsuario(Long idUsuario, Predicate predicate, Pageable pageable) {
+        return vendaRepository.findByUsuarioId(idUsuario, predicate, pageable);
     }
 
     @Override
@@ -71,8 +78,23 @@ public class VendaServiceImpl implements VendaService {
     }
 
     @Override
-    public Venda removerIngresso(IngressoVenda ingressoVenda, long id) {
+    public Venda removerIngresso(Long idIngressoVenda, long id) {
+
         Venda venda = buscarVendaPorId(id);
+
+        IngressoVenda ingressoVenda = null;
+
+        for (IngressoVenda i : venda.getIngressos()) {
+            if (i.getId() == (idIngressoVenda)) {
+                ingressoVenda = i;
+                break;
+            }
+        }
+
+        if (ingressoVenda == null) {
+            throw new RecursoNaoEncontradoException("Ingresso não encontrado");
+        }
+
         venda.removerIngresso(ingressoVenda);
         return vendaRepository.save(venda);
     }
