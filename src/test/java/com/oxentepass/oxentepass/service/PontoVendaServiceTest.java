@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.oxentepass.oxentepass.controller.request.PontoVendaRequest;
-import com.oxentepass.oxentepass.entity.Endereco;
 import com.oxentepass.oxentepass.entity.PontoVenda;
 import com.oxentepass.oxentepass.exceptions.RecursoDuplicadoException;
 import com.oxentepass.oxentepass.repository.PontoVendaRepository;
