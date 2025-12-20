@@ -188,8 +188,8 @@ public class EventoController {
         );
     }
 
-    @PatchMapping("/{idEvento}/removerAvaliacao")
-    public ResponseEntity<String> removerAvaliacao (@PathVariable long idEvento, @RequestBody long idAvaliacao) {
+    @PatchMapping("/{idEvento}/removerAvaliacao/{idAvaliacao}")
+    public ResponseEntity<String> removerAvaliacao (@PathVariable long idEvento, @PathVariable long idAvaliacao) {
         eventoService.removerAvaliacao(idEvento, idAvaliacao);
 
         return new ResponseEntity<String>(
