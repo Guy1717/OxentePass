@@ -1,17 +1,20 @@
 package com.oxentepass.oxentepass.controller.request;
 
+import org.hibernate.validator.constraints.br.CNPJ;
+
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 public record OrganizadorRequest(
-    @NotNull(message = "O ID do usuário é obrigatório") 
+    @NotNull(message = "O ID do usuário é obrigatório")
     Long usuarioId,
-
-    // Removido @NotNull. A validação de tamanho só ocorre se o campo for enviado.
-    @Size(min = 14, max = 18, message = "O CNPJ deve ter entre 14 e 18 caracteres") 
-    String cnpj,
-
-    String telefone,
     
-    String biografia
-) {}
+    @CNPJ
+    @Pattern(
+        regexp = "^(\\d{14}|\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2})$",
+        message = "CNPJ inválido (use 14 dígitos ou o formato 00.000.000/0001-00)"
+    ) 
+    String cnpj,
+    String telefone,
+    String biografia) {
+}
