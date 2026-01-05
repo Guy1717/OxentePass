@@ -16,6 +16,8 @@ import com.oxentepass.oxentepass.entity.MetodoPagamento;
 import com.oxentepass.oxentepass.entity.Pagamento;
 import com.oxentepass.oxentepass.entity.StatusPagamento;
 import com.oxentepass.oxentepass.entity.Venda;
+import com.oxentepass.oxentepass.exceptions.EstadoInvalidoException;
+import com.oxentepass.oxentepass.exceptions.RecursoNaoEncontradoException;
 import com.oxentepass.oxentepass.repository.PagamentoRepository;
 import com.oxentepass.oxentepass.repository.VendaRepository;
 import com.oxentepass.oxentepass.service.MercadoPagoService;
@@ -40,7 +42,7 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
     @Override
     public Pagamento pagarComPix(Long idVenda) {
         try {
-            Venda venda = vendaRepository.findById(idVenda).orElseThrow(() -> new RuntimeException("Venda não encontrada"));
+            Venda venda = vendaRepository.findById(idVenda).orElseThrow(() -> new RecursoNaoEncontradoException("Venda não encontrada"));
 
             Pagamento pagamento = criarPagamentoSeNecessario(venda, MetodoPagamento.PIX);
 
@@ -66,9 +68,9 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
             return pagamentoRepository.save(pagamento);
 
         } catch (MPApiException e) {
-            throw new RuntimeException("Erro na API do Mercado Pago: " + e.getApiResponse().getContent());
+            throw new EstadoInvalidoException("Erro na API do Mercado Pago: " + e.getApiResponse().getContent());
         } catch (Exception e) {
-            throw new RuntimeException("Erro interno ao gerar PIX: " + e.getMessage());
+            throw new EstadoInvalidoException("Erro interno ao gerar PIX: " + e.getMessage());
         }
     }
 
@@ -97,9 +99,9 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
             
         } catch (MPApiException e) {
             System.err.println("ERRO MERCADO PAGO CARTÃO: " + e.getApiResponse().getContent());
-            throw new RuntimeException("Erro na API de Cartão: " + e.getApiResponse().getContent());
+            throw new EstadoInvalidoException("Erro na API de Cartão: " + e.getApiResponse().getContent());
         } catch (Exception e) {
-            throw new RuntimeException("Erro interno: " + e.getMessage());
+            throw new EstadoInvalidoException("Erro interno: " + e.getMessage());
         }
     }
 
