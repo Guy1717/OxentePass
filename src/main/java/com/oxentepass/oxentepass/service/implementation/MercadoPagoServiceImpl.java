@@ -78,7 +78,7 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
     @Override
     public Pagamento pagarComCartao(Long idVenda, String tokenCartao) {
 
-        Venda venda = vendaRepository.findById(idVenda).orElseThrow(() -> new RuntimeException("Venda não encontrada"));
+        Venda venda = vendaRepository.findById(idVenda).orElseThrow(() -> new RecursoNaoEncontradoException("Venda não encontrada"));
 
         try {
 
