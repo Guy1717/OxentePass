@@ -41,8 +41,10 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
     // Paga uma venda utilizando PIX
     @Override
     public Pagamento pagarComPix(Long idVenda) {
+
+        Venda venda = vendaRepository.findById(idVenda).orElseThrow(() -> new RecursoNaoEncontradoException("Venda não encontrada"));
+
         try {
-            Venda venda = vendaRepository.findById(idVenda).orElseThrow(() -> new RecursoNaoEncontradoException("Venda não encontrada"));
 
             Pagamento pagamento = criarPagamentoSeNecessario(venda, MetodoPagamento.PIX);
 
@@ -77,8 +79,10 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
     // Paga uma venda utilizando cartão de crédito
     @Override
     public Pagamento pagarComCartao(Long idVenda, String tokenCartao) {
+
+        Venda venda = vendaRepository.findById(idVenda).orElseThrow(() -> new RuntimeException("Venda não encontrada"));
+
         try {
-            Venda venda = vendaRepository.findById(idVenda).orElseThrow(() -> new RuntimeException("Venda não encontrada"));
 
             Pagamento pagamento = criarPagamentoSeNecessario(venda, MetodoPagamento.CARTAO_CREDITO);
 
