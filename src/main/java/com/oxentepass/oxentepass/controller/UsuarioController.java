@@ -19,7 +19,13 @@ import com.oxentepass.oxentepass.controller.request.UsuarioRequest;
 import com.oxentepass.oxentepass.entity.Usuario;
 import com.oxentepass.oxentepass.service.UsuarioService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+
+/**
+ * @author Guilherme Paes
+ * Controller para manipular Usuario, através de UsuarioService
+ */
 
 @RestController
 @RequestMapping("/usuario")
@@ -28,6 +34,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService service;
 
+    @Operation(summary="Cadastra Usuario", description="Cadastra um novo Usuario")
     @PostMapping
     public ResponseEntity<String> cadastrarUsuario(@RequestBody @Valid UsuarioRequest dto) {
 
@@ -36,11 +43,13 @@ public class UsuarioController {
         return new ResponseEntity<String>("Usuário " + dto.nome() + " criado com sucesso!", HttpStatus.CREATED);
     }
 
+    @Operation(summary="Lista Usuarios", description="Lista todos os usuarios")
     @GetMapping
     public ResponseEntity<Page<Usuario>> listarUsuarios(Pageable pageable) {
         return new ResponseEntity<Page<Usuario>>(service.listarUsuarios(pageable), HttpStatus.OK);
     }
 
+    @Operation(summary="Edita Usuario", description="Edita os dados de um usuário")
     @PutMapping("/{id}")
     public ResponseEntity<String> editarUsuario(@PathVariable long id, @RequestBody @Valid UsuarioRequest dto) {
 
@@ -50,6 +59,7 @@ public class UsuarioController {
 
     }
 
+    @Operation(summary="Deleta Usuario", description="Deleta um usuário")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletarUsuario(@PathVariable long id) {
 
@@ -59,6 +69,7 @@ public class UsuarioController {
 
     }
 
+    @Operation(summary="Login Usuario", description="Autentica o CPF e Senha dum Usuario")
     @PostMapping("/login")
     public ResponseEntity<String> loginUsuario(@RequestBody @Valid UsuarioLoginRequest dto) {
 
