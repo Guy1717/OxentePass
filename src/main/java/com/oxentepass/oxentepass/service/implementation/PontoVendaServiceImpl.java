@@ -33,7 +33,7 @@ public class PontoVendaServiceImpl implements PontoVendaService {
         PontoVenda pontoVenda = repository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Nenhum Ponto de Venda encontrado para este id!"));
 
-        if (pontoVendaExistente(pontoVenda))
+        if (pontoVendaExistente(dados))
             throw new RecursoDuplicadoException("Já existe um Ponto de Venda registrado para este Nome, Cep e Número!");
 
         pontoVenda.setNome(dados.getNome());
